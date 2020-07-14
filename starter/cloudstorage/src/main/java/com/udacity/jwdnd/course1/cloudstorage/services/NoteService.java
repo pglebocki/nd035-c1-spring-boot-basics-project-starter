@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,14 +19,24 @@ public class NoteService {
         this.userService = userService;
     }
 
-    public Note createNote(String title, String description) {
-        User user = userService.getUserByName("t"); // TODO temporary
-        Integer id = noteMapper.insert(new Note(null, title, description, user.getUserId()));
-        return noteMapper.getNote(id);
+    public int createNote(String title, String description, String userName) {
+        User user = userService.getUserByName(userName);
+        return noteMapper.insert(new Note(null, title, description, user.getUserId()));
     }
 
-    public List<Note> getAllNotes() {
-        // TODO consider user id
-        return noteMapper.getNotes();
+    public void deleteNote(Integer id) {
+        noteMapper.delete(id);
+    }
+
+    public void updateNote(Integer id, String title, String description) {
+        noteMapper.update(new Note(id, title, description, null));
+    }
+
+    public List<Note> getAllNotes(String userName) {
+        User user = userService.getUserByName(userName);
+        if (user != null) {
+            return noteMapper.getUserNotes(user.getUserId());
+        }
+        return new ArrayList<>();
     }
 }

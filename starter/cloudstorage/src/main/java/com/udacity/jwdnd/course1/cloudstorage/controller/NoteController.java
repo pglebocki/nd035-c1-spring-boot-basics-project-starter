@@ -2,14 +2,13 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/note")
 public class NoteController {
 
     private final NoteService noteService;
@@ -18,16 +17,21 @@ public class NoteController {
         this.noteService = noteService;
     }
 
-    @PostMapping
-    public String addNote(NoteForm noteForm, Model model) {
-        noteService.createNote(noteForm.getTitle(), noteForm.getDescription());
+    @PostMapping("/note")
+    public String addNote(Authentication authentication, NoteForm noteForm, Model model) {
+        noteService.createNote(noteForm.getTitle(), noteForm.getDescription(), authentication.getName());
         return "redirect:/result";
     }
 
-//    @GetMapping
-//    public String getNote(Model model) {
-////        model.addAttribute("noteForm", new NoteForm());
-////        model.addAttribute("notes", this.noteService.getAllNotes());
-//        return "home";
-//    }
+    @PostMapping("/deleteNote/{id}")
+    public String deleteNote(@PathVariable Integer id, Model model) {
+        noteService.deleteNote(id);
+        return "redirect:/result";
+    }
+
+    @PostMapping("/updateNote")
+    public String updateNote(NoteForm noteForm, Model model) {
+        noteService.updateNote(noteForm.getId(), noteForm.getTitle(), noteForm.getDescription());
+        return "redirect:/result";
+    }
 }
