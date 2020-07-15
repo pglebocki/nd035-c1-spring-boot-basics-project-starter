@@ -18,20 +18,19 @@ public class NoteController {
     }
 
     @PostMapping("/note")
-    public String addNote(Authentication authentication, NoteForm noteForm, Model model) {
-        noteService.createNote(noteForm.getTitle(), noteForm.getDescription(), authentication.getName());
+    public String addOrUpdate(Authentication authentication, NoteForm noteForm, Model model) {
+        Integer noteId = noteForm.getId();
+        if (noteId == null) {
+            noteService.createNote(noteForm.getTitle(), noteForm.getDescription(), authentication.getName());
+        } else {
+            noteService.updateNote(noteId, noteForm.getTitle(), noteForm.getDescription());
+        }
         return "redirect:/result";
     }
 
     @PostMapping("/deleteNote/{id}")
-    public String deleteNote(@PathVariable Integer id, Model model) {
+    public String delete(@PathVariable Integer id, Model model) {
         noteService.deleteNote(id);
-        return "redirect:/result";
-    }
-
-    @PostMapping("/updateNote")
-    public String updateNote(NoteForm noteForm, Model model) {
-        noteService.updateNote(noteForm.getId(), noteForm.getTitle(), noteForm.getDescription());
         return "redirect:/result";
     }
 }
