@@ -144,7 +144,7 @@
                                     <tr>
                                         <td>
                                             <div style="display: flex">
-                                                <button th:onclick="showCredentialModal([[${credential.credentialid}]], [[${credential.url}]], [[${credential.username}]], [[${credential.password}]]);" type="button" class="btn btn-success">Edit</button>
+                                                <button th:onclick="showCredentialModal([[${credential.credentialid}]], [[${credential.url}]], [[${credential.username}]], [[${credential.decodedPassword}]]);" type="button" class="btn btn-success">Edit</button>
                                                 <form style="margin-left: 4px" action="#" th:action="@{'/deleteCredential/' + ${credential.credentialid}}" method="POST">
                                                     <button type="submit" class="btn btn-danger">Delete</button>
                                                 </form>

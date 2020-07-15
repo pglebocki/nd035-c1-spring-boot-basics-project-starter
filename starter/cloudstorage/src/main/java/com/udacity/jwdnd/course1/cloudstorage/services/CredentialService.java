@@ -5,13 +5,13 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
 public class CredentialService {
-
-    private static final String ENCRYPT_KEY = "abcd";
 
     private final UserService userService;
     private final CredentialMapper credentialMapper;
@@ -26,8 +26,9 @@ public class CredentialService {
     public int createCredential(String url, String username, String password, String userName) {
         User user = userService.getUserByName(userName);
         Integer userId = user.getUserId();
-//        String encryptedPassword = encryptionService.encryptValue(password, ENCRYPT_KEY); // TODO fix
-        return credentialMapper.insert(new Credential(null, url, username, ENCRYPT_KEY, password, userId));
+        String encodedKey = generateEncodedKey();
+        String encodedPassword = encryptionService.encryptValue(password, encodedKey);
+        return credentialMapper.insert(new Credential(null, url, username, encodedKey, encodedPassword, userId));
     }
 
     public void deleteCredential(Integer id) {
@@ -35,14 +36,28 @@ public class CredentialService {
     }
 
     public void updateCredential(Integer id, String url, String username, String password) {
-        credentialMapper.update(new Credential(id, url, username, null, password, null));
+        String encodedKey = generateEncodedKey();
+        String encodedPassword = encryptionService.encryptValue(password, encodedKey);
+        credentialMapper.update(new Credential(id, url, username, encodedKey, encodedPassword, null));
     }
 
     public List<Credential> getAllCredentials(String userName) {
         User user = userService.getUserByName(userName);
         if (user != null) {
-            return credentialMapper.getUserCredentials(user.getUserId());
+            List<Credential> credentials = credentialMapper.getUserCredentials(user.getUserId());
+            for (Credential credential : credentials) {
+                String decodedPassword = encryptionService.decryptValue(credential.getPassword(), credential.getKey());
+                credential.setDecodedPassword(decodedPassword);
+            }
+            return credentials;
         }
         return new ArrayList<>();
+    }
+
+    private String generateEncodedKey() {
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        return Base64.getEncoder().encodeToString(key);
     }
 }
