@@ -4,67 +4,67 @@ import java.sql.Blob;
 
 public class File {
 
-    private Integer id;
-    private String name;
-    private String contentType;
-    private String size;
-    private Blob data;
-    private Integer userId;
+    private Integer fileId;
+    private String filename;
+    private String contenttype;
+    private String filesize;
+    private Integer userid;
+    private byte[] filedata;
 
-    public File(Integer id, String name, String contentType, String size, Blob data, Integer userId) {
-        this.id = id;
-        this.name = name;
-        this.contentType = contentType;
-        this.size = size;
-        this.data = data;
-        this.userId = userId;
+    public File(Integer fileId, String filename, String contenttype, String filesize, Integer userid, byte[] filedata) {
+        this.fileId = fileId;
+        this.filename = filename;
+        this.contenttype = contenttype;
+        this.filesize = filesize;
+        this.userid = userid;
+        this.filedata = filedata;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getFileId() {
+        return fileId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setFileId(Integer fileId) {
+        this.fileId = fileId;
     }
 
-    public String getName() {
-        return name;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
-    public String getContentType() {
-        return contentType;
+    public String getContenttype() {
+        return contenttype;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public void setContenttype(String contenttype) {
+        this.contenttype = contenttype;
     }
 
-    public String getSize() {
-        return size;
+    public String getFilesize() {
+        return filesize;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setFilesize(String filesize) {
+        this.filesize = filesize;
     }
 
-    public Blob getData() {
-        return data;
+    public Integer getUserid() {
+        return userid;
     }
 
-    public void setData(Blob data) {
-        this.data = data;
+    public void setUserid(Integer userid) {
+        this.userid = userid;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public byte[] getFiledata() {
+        return filedata;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setFiledata(byte[] filedata) {
+        this.filedata = filedata;
     }
 }
