@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.NoteMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.stereotype.Service;
 
@@ -19,24 +20,36 @@ public class NoteService {
         this.userService = userService;
     }
 
-    public int createNote(String title, String description, String userName) {
-        User user = userService.getUserByName(userName);
-        return noteMapper.insert(new Note(null, title, description, user.getUserId()));
+    public int createNote(NoteForm form, String userName) {
+        final User user = userService.getUserByName(userName);
+        final Note note = formToNote(form);
+        note.setUserid(user.getUserId());
+        return noteMapper.insert(note);
     }
 
     public void deleteNote(Integer id) {
         noteMapper.delete(id);
     }
 
-    public void updateNote(Integer id, String title, String description) {
-        noteMapper.update(new Note(id, title, description, null));
+    public void updateNote(NoteForm form) {
+        final Note note = formToNote(form);
+        noteMapper.update(note);
     }
 
     public List<Note> getAllNotes(String userName) {
-        User user = userService.getUserByName(userName);
+        final User user = userService.getUserByName(userName);
         if (user != null) {
             return noteMapper.getUserNotes(user.getUserId());
         }
         return new ArrayList<>();
+    }
+
+    private Note formToNote(NoteForm form) {
+        return new Note(
+                form.getId(),
+                form.getTitle(),
+                form.getDescription(),
+                null
+        );
     }
 }

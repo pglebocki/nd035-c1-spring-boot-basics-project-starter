@@ -23,15 +23,15 @@ public class AuthenticationService implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
-        String password = authentication.getCredentials().toString();
+        final String userName = authentication.getName();
+        final String password = authentication.getCredentials().toString();
+        final User user = userMapper.getUserByName(userName);
 
-        User user = userMapper.getUserByName(username);
         if (user != null) {
-            String encodedSalt = user.getSalt();
-            String hashedPassword = hashService.getHashedValue(password, encodedSalt);
+            final String encodedSalt = user.getSalt();
+            final String hashedPassword = hashService.getHashedValue(password, encodedSalt);
             if (user.getPassword().equals(hashedPassword)) {
-                return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(userName, password, new ArrayList<>());
             }
         }
 

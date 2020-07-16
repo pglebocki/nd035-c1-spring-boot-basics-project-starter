@@ -5,7 +5,6 @@ import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.utils.MessageUrlComposer;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -22,17 +21,19 @@ public class NoteController {
 
     @PostMapping("/note")
     public String addOrUpdate(Authentication authentication, NoteForm noteForm) {
-        Integer noteId = noteForm.getId();
+        final Integer noteId = noteForm.getId();
         if (noteId == null) {
-            noteService.createNote(noteForm.getTitle(), noteForm.getDescription(), authentication.getName());
+            final String userName = authentication.getName();
+            noteService.createNote(noteForm, userName);
+            return messageUrlComposer.success("Note has been successfully saved.");
         } else {
-            noteService.updateNote(noteId, noteForm.getTitle(), noteForm.getDescription());
+            noteService.updateNote(noteForm);
+            return messageUrlComposer.success("Note has been successfully updated.");
         }
-        return messageUrlComposer.success("Note has been successfully saved.");
     }
 
     @PostMapping("/deleteNote/{id}")
-    public String delete(@PathVariable Integer id, Model model) {
+    public String delete(@PathVariable Integer id) {
         noteService.deleteNote(id);
         return messageUrlComposer.success("Note has been successfully deleted.");
     }

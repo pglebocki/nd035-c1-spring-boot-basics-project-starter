@@ -31,34 +31,43 @@ public class FileController {
 
     @GetMapping("/downloadFile/{fileid}")
     public ResponseEntity downloadFile(@PathVariable Integer fileid) {
-        File file = fileService.getFile(fileid);
+        final File file = fileService.getFile(fileid);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getContenttype()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, createContentDesc(file))
                 .body(file.getFiledata());
     }
 
 
     @PostMapping("/uploadFile")
     public String addOrUpdate(@RequestParam("fileUpload") MultipartFile file, Authentication authentication) {
-        String filename = file.getOriginalFilename();
+        final String filename = file.getOriginalFilename();
         if (fileService.fileExist(filename)) {
-            return messageUrlComposer.success("This file already exist.");
+            return messageUrlComposer.error("This file already exist.");
         } else {
             try {
-                fileService.createFile(file.getOriginalFilename(), file.getContentType(), String.valueOf(file.getSize()), file.getBytes(), authentication.getName());
+                fileService.createFile(
+                        file.getOriginalFilename(),
+                        file.getContentType(),
+                        String.valueOf(file.getSize()),
+                        file.getBytes(),
+                        authentication.getName()
+                );
             } catch (IOException ex) {
-                return messageUrlComposer.success("Cannot upload file.");
+                return messageUrlComposer.error("Cannot upload file.");
             }
         }
-
         return messageUrlComposer.success("File has been successfully uploaded.");
     }
 
     @PostMapping("/deleteFile/{id}")
-    public String delete(@PathVariable Integer id, Model model) {
+    public String delete(@PathVariable Integer id) {
         fileService.deleteFile(id);
         return messageUrlComposer.success("File has been successfully deleted.");
+    }
+
+    private String createContentDesc(File file) {
+        return "attachment; filename=\"" + file.getFilename() + "\"";
     }
 }
 

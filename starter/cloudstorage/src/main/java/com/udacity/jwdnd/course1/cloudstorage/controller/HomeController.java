@@ -27,7 +27,7 @@ public class HomeController {
 
     @GetMapping()
     public String getHomePage(Authentication authentication, Model model) {
-        String username = authentication.getName();
+        final String username = authentication.getName();
         model.addAttribute("files", fileService.getAllFiles(username));
         model.addAttribute("notes", noteService.getAllNotes(username));
         model.addAttribute("noteForm", new NoteForm());

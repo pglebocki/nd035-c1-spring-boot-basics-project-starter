@@ -24,8 +24,9 @@ public class FileService {
     }
 
     public int createFile(String name, String contentType, String size, byte[] data, String userName) {
-        User user = userService.getUserByName(userName);
-        return fileMapper.insert(new File(null, name, contentType, size, user.getUserId(), data));
+        final User user = userService.getUserByName(userName);
+        final File file = new File(null, name, contentType, size, user.getUserId(), data);
+        return fileMapper.insert(file);
     }
 
     public void deleteFile(Integer id) {
@@ -33,7 +34,7 @@ public class FileService {
     }
 
     public List<File> getAllFiles(String userName) {
-        User user = userService.getUserByName(userName);
+        final User user = userService.getUserByName(userName);
         if (user != null) {
             return fileMapper.getUserFiles(user.getUserId());
         }
