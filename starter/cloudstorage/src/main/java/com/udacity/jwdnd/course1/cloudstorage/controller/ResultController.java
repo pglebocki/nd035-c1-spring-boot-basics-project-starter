@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.Status;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,11 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/result")
 public class ResultController {
 
-    @GetMapping("/{status}")
-    public String getResult(@PathVariable("status") String status, Model model) {
-        Status statusObj = new Status();
-        statusObj.setSuccess(status.equals("success"));
-        model.addAttribute("status", statusObj);
-        return "result";
+    @GetMapping("/success/{msg}")
+    public String success(@PathVariable("msg") String message, Model model) {
+        model.addAttribute("message", message);
+        return "success";
+    }
+
+    @GetMapping("/error/{msg}")
+    public String error(@PathVariable("msg") String message, Model model) {
+        model.addAttribute("message", message);
+        return "error";
     }
 }

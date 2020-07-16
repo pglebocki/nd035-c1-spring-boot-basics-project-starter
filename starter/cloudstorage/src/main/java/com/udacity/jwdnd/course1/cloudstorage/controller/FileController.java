@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.MessageUrlComposer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,11 @@ import java.io.IOException;
 public class FileController {
 
     private final FileService fileService;
+    private final MessageUrlComposer messageUrlComposer;
 
-    public FileController(FileService fileService) {
+    public FileController(FileService fileService, MessageUrlComposer messageUrlComposer) {
         this.fileService = fileService;
+        this.messageUrlComposer = messageUrlComposer;
     }
 
     @GetMapping("/downloadFile/{fileid}")
@@ -40,22 +43,22 @@ public class FileController {
     public String addOrUpdate(@RequestParam("fileUpload") MultipartFile file, Authentication authentication) {
         String filename = file.getOriginalFilename();
         if (fileService.fileExist(filename)) {
-            return "redirect:/result/error"; // TODO specify error message
+            return messageUrlComposer.success("This file already exist.");
         } else {
             try {
                 fileService.createFile(file.getOriginalFilename(), file.getContentType(), String.valueOf(file.getSize()), file.getBytes(), authentication.getName());
             } catch (IOException ex) {
-                return "redirect:/result/error";
+                return messageUrlComposer.success("Cannot upload file.");
             }
         }
 
-        return "redirect:/result/success";
+        return messageUrlComposer.success("File has been successfully uploaded.");
     }
 
     @PostMapping("/deleteFile/{id}")
     public String delete(@PathVariable Integer id, Model model) {
         fileService.deleteFile(id);
-        return "redirect:/result/success";
+        return messageUrlComposer.success("File has been successfully deleted.");
     }
 }
 

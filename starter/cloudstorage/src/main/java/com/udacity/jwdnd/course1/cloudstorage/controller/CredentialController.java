@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.CredentialForm;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.MessageUrlComposer;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class CredentialController {
 
     private final CredentialService credentialService;
+    private final MessageUrlComposer messageUrlComposer;
 
-    public CredentialController(CredentialService credentialService) {
+    public CredentialController(CredentialService credentialService, MessageUrlComposer messageUrlComposer) {
         this.credentialService = credentialService;
+        this.messageUrlComposer = messageUrlComposer;
     }
 
     @PostMapping("/credential")
@@ -25,12 +28,12 @@ public class CredentialController {
         } else {
             credentialService.updateCredential(credentialId, form.getUrl(), form.getUsername(), form.getPassword());
         }
-        return "redirect:/result/success";
+        return messageUrlComposer.success("Credentials have been successfully saved.");
     }
 
     @PostMapping("/deleteCredential/{id}")
     public String delete(@PathVariable Integer id, Model model) {
         credentialService.deleteCredential(id);
-        return "redirect:/result/success";
+        return messageUrlComposer.success("Credentials have been successfully deleted.");
     }
 }
