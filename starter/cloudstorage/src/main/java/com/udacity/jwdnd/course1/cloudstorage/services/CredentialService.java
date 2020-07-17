@@ -62,6 +62,10 @@ public class CredentialService {
         return new ArrayList<>();
     }
 
+    public boolean userNameExist(String userName) {
+        return credentialMapper.getCredentialByUsername(userName) != null;
+    }
+
     private Credential formToCredential(CredentialForm form) {
         final String key = keyGenerator.generate();
         final String encodedPassword = encryptionService.encryptValue(

@@ -23,6 +23,11 @@ public class CredentialController {
     public String addOrUpdate(Authentication authentication, CredentialForm form) {
         final Integer credentialId = form.getId();
 
+        boolean userAlreadyExist = credentialService.userNameExist(form.getUsername());
+        if (userAlreadyExist) {
+            return messageUrlComposer.error("User name should be unique.");
+        }
+
         if (credentialId == null) {
             String userName = authentication.getName();
             credentialService.createCredential(form, userName);
